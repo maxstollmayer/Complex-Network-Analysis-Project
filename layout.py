@@ -106,8 +106,15 @@ class Layout:
         data = [[*ij, *rgba] for ij, rgba in zip(self.graph.edges, self.edge_colors)]
         return pd.DataFrame(data, columns=EDGE_COLUMNS)
 
-    def preview(self, renderer: Optional[str] = None) -> None:
-        """"""
+    def preview(self, renderer: Optional[str] = "notebook_connected") -> None:
+        """
+        Displays a 3D plotly figure of the given network layout.
+        The following are the most relevant renderers.
+        None: plotly chooses (can fail in notebook)
+        "browser": opens new tab in default web browser
+        "notebook": adds notebook renderer to file
+        "notebook_connected": calls online notebook renderer
+        """
         normalized_node_colors = normalize_colors(self.node_colors)
         normalized_edge_colors = normalize_colors(self.edge_colors)
         nodes = self.node_table()
@@ -162,7 +169,7 @@ def main() -> None:
     print(layout.node_table())
     print("\nEdge data:")
     print(layout.edge_table())
-    layout.preview()
+    layout.preview(renderer=None)
 
 
 if __name__ == "__main__":
