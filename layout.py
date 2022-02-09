@@ -3,17 +3,14 @@ Defines Layout class for storing a graph and its layout,
 previewing and writing the node and edge tables to files.
 """
 
-from dataclasses import dataclass
 from typing import Any, Collection, Dict, Optional, Tuple, Union
 import networkx as nx
 import numpy as np
 import pandas as pd
-from plotly import graph_objects as go
+from plotly.graph_objects import Figure, Scatter3d
 
 
 # defaults
-NODE_COLUMNS = ["x", "y", "z", "r", "g", "b", "a", "name"]
-EDGE_COLUMNS = ["i", "j", "r", "g", "b", "a"]
 DEFAULT_2D_Z = 0
 DEFAULT_NODE_COLOR = (31, 119, 180, 100)
 DEFAULT_EDGE_COLOR = (0, 0, 0, 100)
@@ -38,111 +35,182 @@ def normalize_colors(colors: Colors) -> Colors:
     return normalized
 
 
-@dataclass
 class Layout:
     """
     Class for storing a graph and its layout, previewing and writing tables to files.
     """
 
-    graph: Graph
-    positions: Positions
-    node_names: Optional[Names] = None
-    node_colors: Optional[Colors] = None
-    edge_colors: Optional[Colors] = None
+    def __init__(
+        self,
+        G: Graph,
+        pos: Positions,
+        node_names: Optional[Names] = None,
+        node_colors: Optional[Colors] = None,
+        edge_colors: Optional[Colors] = None,
+    ) -> None:
+        """Initializes and validates given data and sets some internal variables."""
 
-    def __post_init__(self) -> None:
-        """Data validation and assignments of default colors and names where necessary."""
-        n_nodes = self.graph.number_of_nodes()
-        n_edges = self.graph.number_of_edges()
+        # relabels nodes for combatability with VR
+        self.G: Graph = nx.convert_node_labels_to_integers(G)
+        self.pos: Positions = {idx: value for idx, (_, value) in enumerate(pos.items())}
 
-        if len(self.positions) != n_nodes:
-            raise ValueError("Given positions are not compatible with graph.")
+        # internal variables
+        self._n_nodes = self.G.number_of_nodes()
+        self._n_edges = self.G.number_of_edges()
+        self._dim = len(pos[0])
 
-        if np.array(list(self.positions.values())).shape[1] not in [2, 3]:
-            raise ValueError("Only 2D and 3D layouts are supported.")
-
-        if self.node_names is None or len(self.node_names) != n_nodes:
-            self.node_names = [
-                DEFAULT_NAME_PREFIX + str(node) for node in self.positions.keys()
-            ]
-
-        if self.node_colors is None or len(self.node_colors) != n_nodes:
-            self.node_colors = self.node_colors = np.repeat(
-                [DEFAULT_NODE_COLOR], repeats=n_nodes, axis=0
+        # data validation
+        if len(self.pos) != self._n_nodes:
+            raise ValueError("Given positions do not match the number of nodes.")
+        if self._dim not in [2, 3]:
+            raise ValueError(
+                f"Only 2D and 3D layouts are supported. Not dimension {self._dim}."
             )
 
-        if self.edge_colors is None or len(self.edge_colors) != n_edges:
-            self.edge_colors = np.repeat(
-                [DEFAULT_EDGE_COLOR], repeats=self.graph.number_of_edges(), axis=0
-            )
+        # calls setters on the optional arguments
+        self.node_names = node_names
+        self.node_colors = node_colors
+        self.edge_colors = edge_colors
 
+    @property
+    def node_names(self) -> Names:
+        """Getter for node name collection."""
+        return self._node_names
+
+    @node_names.setter
+    def node_names(self, names: Optional[Names]) -> None:
+        """
+        Setter for node name collection.
+        Sets default values if no names are given or they do not match the number of nodes.
+        """
+        if names is None:
+            self._node_names = [DEFAULT_NAME_PREFIX + str(node) for node in self.G]
+            return
+        if len(names) != self._n_nodes:
+            print("Node names do not match the number of nodes. Uses defaults instead.")
+            self._node_names = [DEFAULT_NAME_PREFIX + str(node) for node in self.G]
+            return
+        self._node_names = names
+
+    @property
+    def node_colors(self) -> Colors:
+        """Getter for node name collection."""
+        return self._node_colors
+
+    @node_colors.setter
+    def node_colors(self, colors: Optional[Colors]) -> None:
+        """
+        Setter for node color collection.
+        Sets default values if no colors are given or they do not match the number of nodes.
+        """
+        if colors is None:
+            self._node_colors = np.repeat(
+                [DEFAULT_NODE_COLOR], repeats=self._n_nodes, axis=0
+            )
+            return
+        if len(colors) != self._n_nodes:
+            print(
+                "Node colors do not match the number of nodes. Uses defaults instead."
+            )
+            self._node_colors = np.repeat(
+                [DEFAULT_NODE_COLOR], repeats=self._n_nodes, axis=0
+            )
+            return
+        self._node_colors = colors
+
+    @property
+    def edge_colors(self) -> Colors:
+        """Getter for edge name collection."""
+        return self._edge_colors
+
+    @edge_colors.setter
+    def edge_colors(self, colors: Optional[Colors]) -> None:
+        """
+        Setter for edge color collection.
+        Sets default values if no colors are given or they do not match the number of edges.
+        """
+        if colors is None:
+            self._edge_colors = np.repeat(
+                [DEFAULT_EDGE_COLOR], repeats=self._n_edges, axis=0
+            )
+            return
+        if len(colors) != self._n_edges:
+            print(
+                "Edge colors do not match the number of edges. Uses defaults instead."
+            )
+            self._edge_colors = np.repeat(
+                [DEFAULT_EDGE_COLOR], repeats=self._n_edges, axis=0
+            )
+            return
+        self._edge_colors = colors
+
+    @property
     def node_table(self) -> pd.DataFrame:
-        """
-        Returns table with normalized node coordinates, colors and names.
-        """
+        """Returns table with node data for VR software."""
 
-        # normalizes coordinates
-        coords = np.array(list(self.positions.values()))
+        # normalizes coordinates to [0, 1]
+        coords = np.array(list(self.pos.values()))
         max_values = coords.max(axis=0)
         min_values = coords.min(axis=0)
         coords = (coords - min_values) / (max_values - min_values)
 
-        dim = coords.shape[1]
-        if dim == 2:
+        if self._dim == 2:
             data = [
                 [*xy, DEFAULT_2D_Z, *rgba, name]
                 for xy, rgba, name in zip(coords, self.node_colors, self.node_names)
             ]
-        else:
+        else:  # dim == 3
             data = [
                 [*xyz, *rgba, name]
                 for xyz, rgba, name in zip(coords, self.node_colors, self.node_names)
             ]
+        return pd.DataFrame(data, columns=["x", "y", "z", "r", "g", "b", "a", "name"])
 
-        return pd.DataFrame.from_records(data, columns=NODE_COLUMNS)
-
+    @property
     def edge_table(self) -> pd.DataFrame:
-        """Returns table with edge data and colors."""
-        data = [[*ij, *rgba] for ij, rgba in zip(self.graph.edges, self.edge_colors)]
-        return pd.DataFrame(data, columns=EDGE_COLUMNS)
+        """Returns table with edge data for VR software."""
+        data = [[*ij, *rgba] for ij, rgba in zip(self.G.edges, self.edge_colors)]
+        return pd.DataFrame(data, columns=["i", "j", "r", "g", "b", "a"])
 
     def preview(self, renderer: Optional[str] = "notebook_connected") -> None:
         """
         Displays a 3D plotly figure of the given network layout.
+        
         The following are the most relevant renderers.
         None: plotly chooses (can fail in notebook)
         "browser": opens new tab in default web browser
         "notebook": adds notebook renderer to file
         "notebook_connected": calls online notebook renderer
         """
-        normalized_node_colors = normalize_colors(self.node_colors)
-        normalized_edge_colors = normalize_colors(self.edge_colors)
-        nodes = self.node_table()
 
-        fig = go.Figure()
+        # normalizes colors and alpha to [0, 1]
+        node_colors_normalized = normalize_colors(self.node_colors)
+        edge_colors_normalized = normalize_colors(self.edge_colors)
+
+        fig = Figure()
         fig.add_trace(
-            go.Scatter3d(
-                x=nodes["x"],
-                y=nodes["y"],
-                z=nodes["z"],
+            Scatter3d(
+                x=self.node_table["x"],
+                y=self.node_table["y"],
+                z=self.node_table["z"],
                 mode="markers",
-                marker=dict(color=normalized_node_colors),
-                text=nodes["name"],
+                marker=dict(color=node_colors_normalized),
+                text=self.node_table["name"],
                 name="",
                 showlegend=False,
             )
         )
-        for u, v in self.graph.edges:
-            df = nodes.loc[[u, v], :]
+        for i, j in self.G.edges:
+            line = self.node_table.loc[[i, j], :]
             fig.add_trace(
-                go.Scatter3d(
-                    x=df["x"],
-                    y=df["y"],
-                    z=df["z"],
+                Scatter3d(
+                    x=line["x"],
+                    y=line["y"],
+                    z=line["z"],
                     mode="lines",
-                    showlegend=False,
+                    line=dict(color=edge_colors_normalized),
                     hoverinfo="skip",
-                    line=dict(color=normalized_edge_colors),
+                    showlegend=False,
                 )
             )
         fig.show(renderer=renderer)
@@ -153,8 +221,8 @@ class Layout:
         edge_file_path: str = DEFAULT_EDGE_FILE,
     ) -> None:
         """Writes node and edge tables to separate csv files."""
-        self.node_table().to_csv(path_or_buf=node_file_path, index=False, header=False)
-        self.edge_table().to_csv(path_or_buf=edge_file_path, index=False, header=False)
+        self.node_table.to_csv(path_or_buf=node_file_path, index=False, header=False)
+        self.edge_table.to_csv(path_or_buf=edge_file_path, index=False, header=False)
 
 
 # only for testing purposes
@@ -166,9 +234,9 @@ def main() -> None:
     pos = nx.spring_layout(G, dim=3)
     layout = Layout(G, pos)
     print("Node data:")
-    print(layout.node_table())
+    print(layout.node_table)
     print("\nEdge data:")
-    print(layout.edge_table())
+    print(layout.edge_table)
     layout.preview(renderer=None)
 
 
