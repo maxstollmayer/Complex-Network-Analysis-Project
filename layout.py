@@ -7,7 +7,7 @@ from typing import Any, Collection, Dict, Optional, Tuple, Union
 import networkx as nx
 import numpy as np
 import pandas as pd
-from plotly.graph_objects import Figure, Scatter3d
+from plotly.graph_objs import Figure, Scatter3d
 
 
 # defaults
