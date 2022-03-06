@@ -52,12 +52,12 @@ class Layout:
 
         # relabels nodes for combatability with VR
         self.G: Graph = nx.convert_node_labels_to_integers(G)
-        self.pos: Positions = {idx: value for idx, (_, value) in enumerate(pos.items())}
+        self.pos: Positions = {idx: value for idx, value in enumerate(pos.values())}
 
         # internal variables
         self._n_nodes = self.G.number_of_nodes()
         self._n_edges = self.G.number_of_edges()
-        self._dim = len(pos[0])
+        self._dim = len(self.pos[0])
 
         # data validation
         if len(self.pos) != self._n_nodes:
