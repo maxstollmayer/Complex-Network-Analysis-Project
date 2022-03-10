@@ -1,0 +1,6 @@
+# prop_name, value
+name,un_migrations
+description,"A network of migration between countries, collected by the United Nations. A directed edge gives the flow of migration, and an edge property gives the number of migrants, for each given year and sex. Estimates are presented for 1990, 1995, 2000, 2005, 2010 and 2015 and are available for all countries and areas of the world. The estimates are based on official statistics on the foreign-born or the foreign population."
+citation,"['United  Nations,  Department  of  Economic  and  Social  Affairs,  Population  Division  (2015). \"Trends in International Migrant Stock: The 2015 Revision.\" (United Nations database, POP/DB/MIG/Stock/Rev.2015), https://www.un.org/en/development/desa/population/migration/data/estimates2/estimates15.asp']"
+url,https://www.un.org/en/development/desa/population/migration/data/estimates2/estimates15.asp
+tags,"['Social', 'Economic', 'Travel', 'Political', 'Weighted', 'Metadata']"
