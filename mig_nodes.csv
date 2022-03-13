@@ -1,4 +1,4 @@
-# index, name, code, region, sub_region, _pos
+index,name,code,region,sub_region,pos
 0,Afghanistan,4,Asia,Southern Asia,"array([1.83174148, 1.86242262])"
 1,Albania,8,Europe,Southern Europe,"array([1.89105956, 2.05459683])"
 2,Algeria,12,Africa,Northern Africa,"array([1.90130528, 1.98917661])"

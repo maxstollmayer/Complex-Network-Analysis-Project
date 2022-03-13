@@ -1,4 +1,4 @@
-source, target, migration_1990_total, migration_1990_male, migration_1990_female, migration_1995_total, migration_1995_male, migration_1995_female, migration_2000_total, migration_2000_male, migration_2000_female, migration_2005_total, migration_2005_male, migration_2005_female, migration_2010_total, migration_2010_male, migration_2010_female, migration_2015_total, migration_2015_male, migration_2015_female
+source,target,migration_1990_total,migration_1990_male,migration_1990_female,migration_1995_total,migration_1995_male,migration_1995_female,migration_2000_total,migration_2000_male,migration_2000_female,migration_2005_total,migration_2005_male,migration_2005_female,migration_2010_total,migration_2010_male,migration_2010_female,migration_2015_total,migration_2015_male,migration_2015_female
 0,64,237,194,43,188,150,38,154,117,37,183,142,41,198,152,46,235,173,62
 0,118,677,556,121,452,351,101,236,155,81,259,187,72,284,206,78,320,231,89
 0,142,64,26,38,61,25,36,58,23,35,45,18,27,43,18,25,39,17,22
