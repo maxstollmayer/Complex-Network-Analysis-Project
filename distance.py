@@ -1,5 +1,5 @@
 from typing import Union, Collection, Callable, Any, Dict
-from itertools import combinations
+from itertools import combinations  # todo: use as alternative to one loop
 import numpy as np
 
 
