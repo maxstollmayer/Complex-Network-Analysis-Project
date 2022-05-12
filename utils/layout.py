@@ -3,12 +3,14 @@ Defines Layout class for storing a graph and its layout,
 previewing and writing the node and edge tables to files.
 """
 
-from typing import Any, Collection, Dict, Optional, Tuple, Union
+from typing import Optional
+
 import networkx as nx
 import numpy as np
 import pandas as pd
-from plotly.graph_objects import Figure, Scatter3d
+import plotly.graph_objects as go
 
+from aliases import Graph, Positions, Colors, Names
 
 # defaults
 DEFAULT_2D_Z = 0
@@ -17,14 +19,6 @@ DEFAULT_EDGE_COLOR = (0, 0, 0, 100)
 DEFAULT_NAME_PREFIX = "node_"
 DEFAULT_NODE_FILE = "nodes.csv"
 DEFAULT_EDGE_FILE = "edges.csv"
-
-# type aliases
-Number = Union[int, float]
-Graph = nx.Graph
-Positions = Dict[Any, Collection[Number]]
-Color = Tuple[Number, Number, Number, Number]
-Colors = Collection[Color]
-Names = Collection[str]
 
 
 def normalize_colors(colors: Colors) -> Colors:
@@ -175,7 +169,7 @@ class Layout:
     def preview(self, renderer: Optional[str] = "notebook_connected") -> None:
         """
         Displays a 3D plotly figure of the given network layout.
-        
+
         The following are the most relevant renderers.
         None: plotly chooses (can fail in notebook)
         "browser": opens new tab in default web browser
@@ -187,9 +181,9 @@ class Layout:
         node_colors_normalized = normalize_colors(self.node_colors)
         edge_colors_normalized = normalize_colors(self.edge_colors)
 
-        fig = Figure()
+        fig = go.Figure()
         fig.add_trace(
-            Scatter3d(
+            go.Scatter3d(
                 x=self.node_table["x"],
                 y=self.node_table["y"],
                 z=self.node_table["z"],
@@ -203,7 +197,7 @@ class Layout:
         for i, j in self.G.edges:
             line = self.node_table.loc[[i, j], :]
             fig.add_trace(
-                Scatter3d(
+                go.Scatter3d(
                     x=line["x"],
                     y=line["y"],
                     z=line["z"],
