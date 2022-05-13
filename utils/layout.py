@@ -5,6 +5,7 @@ previewing and writing the node and edge tables to files.
 
 from typing import Optional
 
+from matplotlib import pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -44,14 +45,14 @@ class Layout:
     ) -> None:
         """Initializes and validates given data and sets some internal variables."""
 
-        # relabels nodes for combatability with VR
-        self.G: Graph = nx.convert_node_labels_to_integers(G)
-        self.pos: Positions = {idx: value for idx, value in enumerate(pos.values())}
+        self.G: Graph = G.copy()
+        self.pos: Positions = pos.copy()
 
         # internal variables
         self._n_nodes = self.G.number_of_nodes()
         self._n_edges = self.G.number_of_edges()
         self._dim = len(self.pos[0])
+        self._relabeled_edges = nx.convert_node_labels_to_integers(self.G).edges
 
         # data validation
         if len(self.pos) != self._n_nodes:
@@ -78,11 +79,11 @@ class Layout:
         Sets default values if no names are given or they do not match the number of nodes.
         """
         if names is None:
-            self._node_names = [DEFAULT_NAME_PREFIX + str(node) for node in self.G]
+            self._node_names = self.G.nodes
             return
         if len(names) != self._n_nodes:
             print("Node names do not match the number of nodes. Uses defaults instead.")
-            self._node_names = [DEFAULT_NAME_PREFIX + str(node) for node in self.G]
+            self._node_names = self.G.nodes
             return
         self._node_names = names
 
@@ -144,9 +145,9 @@ class Layout:
 
         # normalizes coordinates to [0, 1]
         coords = np.array(list(self.pos.values()))
-        max_values = coords.max(axis=0)
-        min_values = coords.min(axis=0)
-        coords = (coords - min_values) / (max_values - min_values)
+        max_value = coords.max()
+        min_value = coords.min()
+        coords = (coords - min_value) / (max_value - min_value)
 
         if self._dim == 2:
             data = [
@@ -163,15 +164,18 @@ class Layout:
     @property
     def edge_table(self) -> pd.DataFrame:
         """Returns table with edge data for VR software."""
-        data = [[*ij, *rgba] for ij, rgba in zip(self.G.edges, self.edge_colors)]
+        data = [
+            [*ij, *rgba] for ij, rgba in zip(self._relabeled_edges, self.edge_colors)
+        ]
         return pd.DataFrame(data, columns=["i", "j", "r", "g", "b", "a"])
 
     def preview(self, renderer: Optional[str] = "notebook_connected") -> None:
         """
-        Displays a 3D plotly figure of the given network layout.
+        Displays a 3D figure of the given network layout.
 
         The following are the most relevant renderers.
-        None: plotly chooses (can fail in notebook)
+        None: plotly with automatic renderer
+        "matplotlib": static 3D matplotlib plot
         "browser": opens new tab in default web browser
         "notebook": adds notebook renderer to file
         "notebook_connected": calls online notebook renderer
@@ -181,7 +185,53 @@ class Layout:
         node_colors_normalized = normalize_colors(self.node_colors)
         edge_colors_normalized = normalize_colors(self.edge_colors)
 
-        fig = go.Figure()
+        # static matplotlib
+        if renderer == "matplotlib":
+            plt.style.use("default")
+            fig = plt.figure()
+            ax = fig.add_subplot(projection="3d")
+
+            ax.scatter(
+                self.node_table["x"],
+                self.node_table["y"],
+                self.node_table["z"],
+                c=node_colors_normalized,
+            )
+
+            for k, (i, j) in enumerate(self._relabeled_edges):
+                line = self.node_table.loc[[i, j], :]
+                ax.plot(
+                    line["x"], line["y"], line["z"], color=edge_colors_normalized[k]
+                )
+
+            ax.set_xlabel("x")
+            ax.set_ylabel("y")
+            ax.set_zlabel("z")
+            ax.axes.set_xlim3d(left=0, right=1)
+            ax.axes.set_ylim3d(bottom=0, top=1)
+            ax.axes.set_zlim3d(bottom=0, top=1)
+
+            fig.tight_layout()
+            plt.show()
+            return
+
+        # interactive plotly
+        fig = go.Figure(
+            layout=go.Layout(
+                scene=dict(
+                    aspectmode="cube",
+                    xaxis=dict(
+                        range=[0, 1],
+                    ),
+                    yaxis=dict(
+                        range=[0, 1],
+                    ),
+                    zaxis=dict(
+                        range=[0, 1],
+                    ),
+                ),
+            )
+        )
         fig.add_trace(
             go.Scatter3d(
                 x=self.node_table["x"],
@@ -194,7 +244,7 @@ class Layout:
                 showlegend=False,
             )
         )
-        for i, j in self.G.edges:
+        for k, (i, j) in self._relabeled_edges:
             line = self.node_table.loc[[i, j], :]
             fig.add_trace(
                 go.Scatter3d(
@@ -202,12 +252,13 @@ class Layout:
                     y=line["y"],
                     z=line["z"],
                     mode="lines",
-                    line=dict(color=edge_colors_normalized),
+                    line=dict(color=edge_colors_normalized[k]),
                     hoverinfo="skip",
                     showlegend=False,
                 )
             )
         fig.show(renderer=renderer)
+        return
 
     def write(
         self,
