@@ -1,0 +1,182 @@
+#label_i;label_j;weight
+Phenobarbital;Hydrocortisone;112857000000
+Phenytoin;Hydrocortisone;125714000000
+Warfarin;Ciprofloxacin;19
+Metronidazole;Phenobarbital;151429000000
+Aminophylline;Erythromycin;125714000000
+Phenytoin;Ciprofloxacin;164286000000
+Timolol;Aminophylline;267143000000
+Fenoterol;Timolol;138571000000
+Carbamazepine;Erythromycin;164286000000
+Aminophylline;Ciprofloxacin;19
+Metronidazole;Lithium;202857000000
+Metronidazole;Carbamazepine;164286000000
+Epinephrine;Atenolol;10
+Diazepam;Erythromycin;177143000000
+Lithium;Ibuprofen;202857000000
+Warfarin;Diclofenac;164286000000
+Carbamazepine;Fluconazole;292857000000
+Phenytoin;Aminophylline;254286000000
+Phenobarbital;Prednisolone;138571000000
+Carbamazepine;Diltiazem;382857000000
+Phenytoin;Furosemide;498571000000
+Haloperidol;Fluconazole;305714000000
+Fluoxetine;Erythromycin;138571000000
+Digoxin;Diazepam;382857000000
+Fenoterol;Atenolol;202857000000
+Levodopa;Phenytoin;652857000000
+Iron (II) Sulfate;Ciprofloxacin;305714000000
+Phenobarbital;Prednisone;19
+Fenoterol;Methyldopa;215714000000
+Phenobarbital;Propranolol;434286000000
+Ibuprofen;Furosemide;357143000000
+Ethinyl Estradiol;Carbamazepine;28
+ASA;Hydrocortisone;138571000000
+Timolol;Ibuprofen;292857000000
+Clonazepam;Fluconazole;305714000000
+Trimethoprim;Phenytoin;305714000000
+Carbamazepine;Methylphenidate;408571000000
+Azithromycin;Warfarin;19
+Chlorpromazine;Propranolol;524286000000
+Diclofenac;Alendronate;151429000000
+Amlodipine;Diltiazem;537143000000
+Phenytoin;Sulfadiazine;755714000000
+Lithium;Enalapril;305714000000
+Maprotiline;Propranolol;395714000000
+Lithium;Captopril;331429000000
+Losartan;Lithium;37
+Warfarin;Acetaminophen;382857000000
+Warfarin;Allopurinol;691429000000
+Folic acid;Phenobarbital;37
+Biperiden;Haloperidol;100
+Estrogens Conj.;Phenytoin;177143000000
+Tobramycin;Furosemide;202857000000
+Gentamicin;Furosemide;254286000000
+Metoclopramide;Levodopa;241429000000
+Timolol;Glyburide;344286000000
+Spironolactone;Digoxin;807143000000
+Norfloxacin;Aminophylline;292857000000
+Amoxicillin;Ethinyl Estradiol;215714000000
+Warfarin;Fluconazole;267143000000
+Estradiol;Prednisolone;177143000000
+Ethinyl Estradiol;Prednisone;215714000000
+Lithium;Hydrochlorothiazide;395714000000
+Simvastatin;Erythromycin;151429000000
+Amiodarone;Phenytoin;55
+Doxycycline;Phenobarbital;202857000000
+Fenoterol;Imipramine;202857000000
+Warfarin;Propylthiouracil;678571000000
+Timolol;Salbutamol;292857000000
+Norethisterone;Phenobarbital;357143000000
+Fenoterol;Nortriptyline;241429000000
+Iron (II) Sulfate;Levothyroxine;447143000000
+Imipramine;Fluconazole;292857000000
+Carbamazepine;Doxycycline;215714000000
+Lithium;Aminophylline;292857000000
+Doxycycline;Clavulanate;28
+Timolol;Gliclazide;382857000000
+Carbamazepine;Verapamil;498571000000
+Phenytoin;Omeprazole;511429000000
+Fenoterol;Amitriptyline;254286000000
+Dexamethasone;Phenobarbital;164286000000
+Carbamazepine;Levonorgestrel;28
+Fenoterol;Propranolol;318571000000
+Warfarin;Medroxyproges. Ac.;382857000000
+Medroxyproges. Ac.;Phenobarbital;498571000000
+Ibuprofen;Propranolol;421429000000
+Phenobarbital;Levonorgestrel;305714000000
+Levodopa;Methyldopa;652857000000
+Phenytoin;Fluconazole;395714000000
+Phenytoin;Dexamethasone;19
+Amitriptyline;Fluconazole;344286000000
+Warfarin;Prednisone;344286000000
+Carvedilol;Fluoxetine;395714000000
+Fluoxetine;Propranolol;434286000000
+Carvedilol;Ibuprofen;305714000000
+Ethinyl Estradiol;Clavulanate;215714000000
+Verapamil;Digoxin;254286000000
+Omeprazole;Diazepam;447143000000
+Verapamil;Atenolol;434286000000
+Haloperidol;Propranolol;408571000000
+Fenoterol;Carvedilol;267143000000
+ASA;Gliclazide;562857000000
+Ibuprofen;Atenolol;37
+Iron (II) Sulfate;Doxycycline;357143000000
+Fluconazole;Diazepam;318571000000
+Carbamazepine;Norethisterone;472857000000
+Warfarin;Levothyroxine;678571000000
+Nortriptyline;Fluconazole;357143000000
+Methyldopa;Haloperidol;485714000000
+Digoxin;Propylthiouracil;64
+Verapamil;Propranolol;64
+Clonazepam;Omeprazole;434286000000
+Digoxin;Furosemide;871429000000
+Propranolol;Diltiazem;704286000000
+Warfarin;Doxycycline;395714000000
+Salbutamol;Propranolol;357143000000
+Gliclazide;Propranolol;485714000000
+Simvastatin;Fluconazole;357143000000
+Estradiol;Prednisone;19
+Digoxin;Levothyroxine;652857000000
+ASA;Prednisolone;151429000000
+Amiodarone;Digoxin;73
+Hydrochlorothiazide;Digoxin;691429000000
+Atenolol;Diltiazem;768571000000
+Imipramine;Salbutamol;305714000000
+Amoxicillin;Doxycycline;37
+Carvedilol;Digoxin;627143000000
+Ethinyl Estradiol;Doxycycline;344286000000
+Atenolol;Salbutamol;395714000000
+Iron (II) Sulfate;Methyldopa;55
+Ibuprofen;ASA;395714000000
+Amiodarone;Diltiazem;82
+Iron (II) Sulfate;Norfloxacin;28
+Ethinyl Estradiol;Prednisolone;318571000000
+Nortriptyline;Salbutamol;408571000000
+Amitriptyline;Salbutamol;382857000000
+Glyburide;Carvedilol;55
+Lithium;Fluoxetine;704286000000
+Carbamazepine;Imipramine;742857000000
+Nortriptyline;Fluoxetine;524286000000
+Imipramine;Fluoxetine;64
+Timolol;Methyldopa;408571000000
+Atenolol;Gliclazide;537143000000
+Amitriptyline;Carbamazepine;73
+Amitriptyline;Fluoxetine;678571000000
+Estrogens Conj.;Phenobarbital;331429000000
+Lithium;Haloperidol;73
+Dexamethasone;ASA;254286000000
+Estrogens Conj.;Prednisolone;28
+Estrogens Conj.;Prednisone;357143000000
+Phenytoin;Prednisolone;228571000000
+Phenytoin;Diazepam;614286000000
+Phenytoin;Norethisterone;408571000000
+Phenytoin;Prednisone;292857000000
+Phenytoin;Fluoxetine;704286000000
+Phenytoin;Levonorgestrel;73
+Phenytoin;Doxycycline;421429000000
+Carbamazepine;Fluoxetine;742857000000
+Carbamazepine;Haloperidol;652857000000
+Glyburide;ASA;871429000000
+Estradiol;Phenytoin;408571000000
+Glyburide;Propranolol;832857000000
+Glyburide;Atenolol;845714000000
+Ethinyl Estradiol;Aminophylline;511429000000
+Ethinyl Estradiol;Phenobarbital;357143000000
+Ethinyl Estradiol;Phenytoin;73
+Methyldopa;Salbutamol;524286000000
+Methyldopa;Propranolol;82
+ASA;Prednisone;344286000000
+Estradiol;Phenobarbital;357143000000
+Warfarin;Carbamazepine;472857000000
+Aminophylline;Propranolol;807143000000
+Carvedilol;Gliclazide;64
+Warfarin;Fluoxetine;421429000000
+Warfarin;Phenytoin;395714000000
+Simvastatin;Diltiazem;807143000000
+Medroxyproges. Ac.;Phenytoin;781429000000
+Carbamazepine;Aminophylline;421429000000
+Phenobarbital;Aminophylline;318571000000
+Carbamazepine;Simvastatin;46
+Carbamazepine;Nortriptyline;64
+Folic acid;Phenytoin;472857000000
