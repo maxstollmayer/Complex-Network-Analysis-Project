@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from aliases import Graph, Positions, Colors, Names
+from utils.aliases import Graph, Positions, Colors, Names
 
 # defaults
 DEFAULT_2D_Z = 0
@@ -244,7 +244,7 @@ class Layout:
                 showlegend=False,
             )
         )
-        for k, (i, j) in self._relabeled_edges:
+        for k, (i, j) in enumerate(self._relabeled_edges):
             line = self.node_table.loc[[i, j], :]
             fig.add_trace(
                 go.Scatter3d(
