@@ -246,13 +246,14 @@ class Layout:
         )
         for k, (i, j) in enumerate(self._relabeled_edges):
             line = self.node_table.loc[[i, j], :]
+            color = f"rgba({self.edge_colors[k][0]}, {self.edge_colors[k][1]}, {self.edge_colors[k][2]}, {edge_colors_normalized[k][-1]})"
             fig.add_trace(
                 go.Scatter3d(
                     x=line["x"],
                     y=line["y"],
                     z=line["z"],
                     mode="lines",
-                    line=dict(color=edge_colors_normalized[k]),
+                    line=dict(color=color),
                     hoverinfo="skip",
                     showlegend=False,
                 )
