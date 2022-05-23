@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from aliases import Graph, Positions, Colors, Names
+from utils.aliases import Graph, Positions, Colors, Names
 
 # defaults
 DEFAULT_2D_Z = 0
