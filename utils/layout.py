@@ -13,13 +13,13 @@ import plotly.graph_objects as go
 
 from utils.aliases import Graph, Positions, Colors, Names
 
+
 # defaults
-DEFAULT_2D_Z = 0
 DEFAULT_NODE_COLOR = (31, 119, 180, 100)
 DEFAULT_EDGE_COLOR = (0, 0, 0, 100)
-DEFAULT_NAME_PREFIX = "node_"
-DEFAULT_NODE_FILE = "nodes.csv"
-DEFAULT_EDGE_FILE = "edges.csv"
+NODE_NAME_PREFIX = "node_"
+NODE_FILE_SUFFIX = "nodes.csv"
+EDGE_FILE_SUFFIX = "edges.csv"
 
 
 def normalize_colors(colors: Colors) -> Colors:
@@ -32,40 +32,52 @@ def normalize_colors(colors: Colors) -> Colors:
 
 class Layout:
     """
-    Class for storing a graph and its layout, previewing and writing tables to files.
+    Class for storing a graph and its layout, previewing and writing tables to files for the VR app.
     """
 
     def __init__(
         self,
         G: Graph,
-        pos: Positions,
+        pos: Optional[Positions] = None,
         node_names: Optional[Names] = None,
         node_colors: Optional[Colors] = None,
         edge_colors: Optional[Colors] = None,
     ) -> None:
-        """Initializes and validates given data and sets some internal variables."""
+        """Initializes class and sets some internal variables."""
 
+        # copies graph
         self.G: Graph = G.copy()
-        self.pos: Positions = pos.copy()
 
         # internal variables
         self._n_nodes = self.G.number_of_nodes()
         self._n_edges = self.G.number_of_edges()
-        self._dim = len(self.pos[0])
         self._relabeled_edges = nx.convert_node_labels_to_integers(self.G).edges
 
-        # data validation
-        if len(self.pos) != self._n_nodes:
-            raise ValueError("Given positions do not match the number of nodes.")
-        if self._dim not in [2, 3]:
-            raise ValueError(
-                f"Only 2D and 3D layouts are supported. Not dimension {self._dim}."
-            )
-
-        # calls setters on the optional arguments
+        # calls setters on optional arguments
+        self.pos = pos
         self.node_names = node_names
         self.node_colors = node_colors
         self.edge_colors = edge_colors
+
+    @property
+    def pos(self) -> Positions:
+        """Getter for node positions."""
+        return self._pos
+
+    @pos.setter
+    def pos(self, pos: Optional[Positions]) -> None:
+        """
+        Setter for node positions. Sets spring layout positions of none given.
+        Raises ValueError if they are not 3D or do not match number of nodes.
+        """
+        if pos is None:
+            self._pos = nx.spring_layout(self.G, dim=3)
+            return
+        if len(pos) != self._n_nodes:
+            raise ValueError("Positions do not match the number of nodes.")
+        if len(pos[0]) != 3:
+            raise ValueError(f"Only 3D layouts are supported.")
+        self._pos = pos
 
     @property
     def node_names(self) -> Names:
@@ -75,16 +87,14 @@ class Layout:
     @node_names.setter
     def node_names(self, names: Optional[Names]) -> None:
         """
-        Setter for node name collection.
-        Sets default values if no names are given or they do not match the number of nodes.
+        Setter for node name collection. Sets default values if none given.
+        Raises ValueError if they do not match the number of nodes.
         """
         if names is None:
             self._node_names = self.G.nodes
             return
         if len(names) != self._n_nodes:
-            print("Node names do not match the number of nodes. Uses defaults instead.")
-            self._node_names = self.G.nodes
-            return
+            raise ValueError("Node names do not match the number of nodes.")
         self._node_names = names
 
     @property
@@ -95,8 +105,8 @@ class Layout:
     @node_colors.setter
     def node_colors(self, colors: Optional[Colors]) -> None:
         """
-        Setter for node color collection.
-        Sets default values if no colors are given or they do not match the number of nodes.
+        Setter for node color collection. Sets default color if none given.
+        Raises ValueError if they do not match the number of nodes.
         """
         if colors is None:
             self._node_colors = np.repeat(
@@ -104,13 +114,7 @@ class Layout:
             )
             return
         if len(colors) != self._n_nodes:
-            print(
-                "Node colors do not match the number of nodes. Uses defaults instead."
-            )
-            self._node_colors = np.repeat(
-                [DEFAULT_NODE_COLOR], repeats=self._n_nodes, axis=0
-            )
-            return
+            raise ValueError("Node colors do not match the number of nodes.")
         self._node_colors = colors
 
     @property
@@ -121,8 +125,8 @@ class Layout:
     @edge_colors.setter
     def edge_colors(self, colors: Optional[Colors]) -> None:
         """
-        Setter for edge color collection.
-        Sets default values if no colors are given or they do not match the number of edges.
+        Setter for edge color collection. Sets default values if none given.
+        Raises ValueError if they do not match the number of edges.
         """
         if colors is None:
             self._edge_colors = np.repeat(
@@ -130,13 +134,7 @@ class Layout:
             )
             return
         if len(colors) != self._n_edges:
-            print(
-                "Edge colors do not match the number of edges. Uses defaults instead."
-            )
-            self._edge_colors = np.repeat(
-                [DEFAULT_EDGE_COLOR], repeats=self._n_edges, axis=0
-            )
-            return
+            raise ValueError("Edge colors do not match the number of edges.")
         self._edge_colors = colors
 
     @property
@@ -149,16 +147,10 @@ class Layout:
         min_value = coords.min()
         coords = (coords - min_value) / (max_value - min_value)
 
-        if self._dim == 2:
-            data = [
-                [*xy, DEFAULT_2D_Z, *rgba, name]
-                for xy, rgba, name in zip(coords, self.node_colors, self.node_names)
-            ]
-        else:  # dim == 3
-            data = [
-                [*xyz, *rgba, name]
-                for xyz, rgba, name in zip(coords, self.node_colors, self.node_names)
-            ]
+        data = [
+            [*xyz, *rgba, name]
+            for xyz, rgba, name in zip(coords, self.node_colors, self.node_names)
+        ]
         return pd.DataFrame(data, columns=["x", "y", "z", "r", "g", "b", "a", "name"])
 
     @property
@@ -263,12 +255,17 @@ class Layout:
 
     def write(
         self,
-        node_file_path: str = DEFAULT_NODE_FILE,
-        edge_file_path: str = DEFAULT_EDGE_FILE,
+        file_path: Optional[str] = None,
     ) -> None:
         """Writes node and edge tables to separate csv files."""
-        self.node_table.to_csv(path_or_buf=node_file_path, index=False, header=False)
-        self.edge_table.to_csv(path_or_buf=edge_file_path, index=False, header=False)
+        if file_path is None:
+            node_file = NODE_FILE_SUFFIX
+            edge_file = EDGE_FILE_SUFFIX
+        else:
+            node_file = file_path + "_" + NODE_FILE_SUFFIX
+            edge_file = file_path + "_" + EDGE_FILE_SUFFIX
+        self.node_table.to_csv(node_file, index=False, header=False)
+        self.edge_table.to_csv(edge_file, index=False, header=False)
 
 
 # only for testing purposes
