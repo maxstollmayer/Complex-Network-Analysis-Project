@@ -113,6 +113,9 @@ class Layout:
                 [DEFAULT_NODE_COLOR], repeats=self._n_nodes, axis=0
             )
             return
+        if len(colors) == 1:
+            self._node_colors = np.repeat(colors, repeats=self._n_nodes, axis=0)
+            return
         if len(colors) != self._n_nodes:
             raise ValueError("Node colors do not match the number of nodes.")
         self._node_colors = colors
@@ -132,6 +135,9 @@ class Layout:
             self._edge_colors = np.repeat(
                 [DEFAULT_EDGE_COLOR], repeats=self._n_edges, axis=0
             )
+            return
+        if len(colors) == 1:
+            self._edge_colors = np.repeat(colors, repeats=self._n_edges, axis=0)
             return
         if len(colors) != self._n_edges:
             raise ValueError("Edge colors do not match the number of edges.")
