@@ -115,3 +115,7 @@ dmypy.json
 
 # Editor Settings
 .vscode/
+
+# video files
+video/footage/
+video/Adobe Premiere Pro Auto-Save/
