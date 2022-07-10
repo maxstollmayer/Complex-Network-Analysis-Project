@@ -119,3 +119,4 @@ dmypy.json
 # video files
 video/footage/
 video/Adobe Premiere Pro Auto-Save/
+video/*.mp4
